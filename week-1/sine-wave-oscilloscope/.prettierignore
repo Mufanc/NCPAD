@@ -1,0 +1,6 @@
+*.d.ts
+/dist/
+/dist-electron/
+/pnpm-lock.yaml
+/public/
+/README.md
