@@ -80,6 +80,7 @@ function draw() {
     cursor: pointer;
     border-radius: 8px;
     margin-bottom: 1em;
+    outline: none;
 }
 
 :global(:is(html, body)) {
