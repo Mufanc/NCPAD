@@ -1,12 +1,15 @@
 const { Socket: TcpClient, Server: TcpServer } = window.require('net') // TCP
 const { Socket: UdpSocketRaw, createSocket } = window.require('dgram') // UDP
 
+// import { Socket as TcpClient, Server as TcpServer } from 'net'
 // import { Socket as UdpSocketRaw } from 'dgram'
 
 type TcpClient = typeof TcpClient
 type TcpServer = typeof TcpServer
 type UdpSocketRaw = typeof UdpSocketRaw
-type ProtocolType = 'TCP' | 'UDP' | 'CUSTOM'
+type ProtocolType = 'TCP' | 'UDP'
+
+export { Protocol } from './protocol'
 
 export abstract class Socket {
     static create(protocol: ProtocolType): Socket {
@@ -15,16 +18,13 @@ export abstract class Socket {
                 return new TcpSocket()
             case 'UDP':
                 return new UdpSocket()
-            case 'CUSTOM':
-                throw 'Not Implemented!'
-            // return new WrapSocket();
         }
     }
 
     abstract address(): [string, number]
     abstract listen(port: number, callback: () => void): void
     abstract connect(host: string, port: number, callback?: () => void): void
-    abstract send(message: string): void
+    abstract send(data: string | Buffer): void
     abstract onAccept(callback: (arg0: Socket | Buffer) => void): void
     abstract close(): void
     abstract onClose(callback: () => void): void
@@ -39,7 +39,8 @@ class TcpSocket extends Socket {
     }
 
     address(): [string, number] {
-        return [this.#raw.remoteAddress, this.#raw.remotePort]
+        const raw = this.#raw as TcpClient
+        return [raw?.remoteAddress!, raw?.remotePort!]
     }
 
     listen(port: number, callback: () => void) {
@@ -52,8 +53,9 @@ class TcpSocket extends Socket {
         this.#raw.connect(port, host, callback)
     }
 
-    send(message: string) {
-        this.#raw.write(message)
+    send(data: string | Buffer) {
+        const raw = this.#raw as TcpClient
+        raw?.write(data)
     }
 
     onAccept(callback: (arg0: Socket | Buffer) => void) {
@@ -92,7 +94,7 @@ class UdpSocket extends Socket {
         return [info.address, info.port]
     }
 
-    close(): void { }
+    close(): void {}
 
     connect(host: string, port: number, callback: () => void): void {
         this.#raw.connect(port, host, callback)
@@ -115,15 +117,11 @@ class UdpSocket extends Socket {
         this.#raw.on('message', callback)
     }
 
-    onClose(callback: () => void): void { }
+    onClose(callback: () => void): void {}
 
-    send(message: string): void {
-        this.#raw.send(message, () => {
+    send(data: string | Buffer): void {
+        this.#raw.send(data, () => {
             this.#raw.disconnect()
         })
     }
 }
-
-// class WrapSocket extends Socket {
-//
-// }
