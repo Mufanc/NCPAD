@@ -6,9 +6,9 @@ export default defineConfig({
         presetUno(),
         presetIcons({
             collections: {
-                mdi: () => import('@iconify-json/mdi/icons.json').then(i => i.default)
-            }
-        })
+                mdi: () => import('@iconify-json/mdi/icons.json').then(i => i.default),
+            },
+        }),
     ],
     transformers: [transformerDirectives()],
 })

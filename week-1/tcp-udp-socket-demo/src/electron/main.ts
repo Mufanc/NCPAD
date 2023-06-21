@@ -1,4 +1,3 @@
-import { join } from 'path'
 import { app, BrowserWindow, ipcMain } from 'electron'
 
 app.on('ready', async () => {
@@ -8,14 +7,14 @@ app.on('ready', async () => {
         height: 600,
         resizable: false,
         webPreferences: {
-            preload: join(__dirname, 'preload.js'),
-            // nodeIntegration: true,
-            // contextIsolation: false
+            nodeIntegration: true,
+            contextIsolation: false,
         },
     })
 
     ipcMain.on('EXIT', () => app.quit())
     ipcMain.on('SET-TITLE', (ev, name) => win.setTitle(name))
+    ipcMain.handle('GET-ENV', (ev, name) => process.env[name])
 
     if (process.env['VITE_DEV_SERVER_URL']) {
         await win.loadURL(process.env['VITE_DEV_SERVER_URL'])

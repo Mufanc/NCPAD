@@ -16,9 +16,6 @@ export default defineConfig({
             {
                 entry: 'src/electron/main.ts',
             },
-            {
-                entry: 'src/electron/preload.ts',
-            },
         ]),
         AutoImport({
             resolvers: [ElementPlusResolver()],
@@ -31,5 +28,10 @@ export default defineConfig({
         alias: {
             '@': resolve(__dirname, 'src'),
         },
-    }
+    },
+    build: {
+        rollupOptions: {
+            external: ['net', 'node:net'],
+        },
+    },
 })

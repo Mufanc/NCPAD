@@ -1,14 +1,14 @@
 <template>
     <div class="input-view">
         <textarea
-            ref='input'
+            ref="input"
             class="input"
             :placeholder="props.hint"
             :value="props.modelValue"
             @input="emit('update:modelValue', $event.target.value)"
-            :readonly='props.readonly'
+            :readonly="props.readonly"
         />
-        <el-button @click="clear" class='clear-button' type='danger' plain round>
+        <el-button @click="clear" class="clear-button" type="danger" plain round>
             <template #icon>
                 <div class="i-mdi:close" />
             </template>
@@ -34,7 +34,7 @@ const emit = defineEmits<{
 }>()
 
 const input = ref<HTMLTextAreaElement | null>(null)
-const opacity = computed(() => props.modelValue ? 1 : 0)
+const opacity = computed(() => (props.modelValue ? 1 : 0))
 
 function clear() {
     emit('update:modelValue', '')
@@ -50,7 +50,7 @@ function clear() {
         box-sizing: border-box;
         resize: none;
         padding: 0.5em;
-        font-family: 'Noto Sans SC', sans-serif !important;
+        font-family: 'Source Code Pro', 'Noto Sans SC', system-ui;
 
         &:focus-visible {
             outline: var(--el-color-success) auto 1px;
@@ -65,7 +65,7 @@ function clear() {
         position: absolute;
         right: 5px;
         top: 5px;
-        transition: opacity .2s ease-in-out !important;
+        transition: opacity 0.2s ease-in-out !important;
         opacity: 0;
     }
 }

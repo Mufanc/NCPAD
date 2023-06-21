@@ -19,6 +19,7 @@
         "@types/node": "^20.3.1",
         "@unocss/preset-icons": "^0.53.1",
         "@vitejs/plugin-vue": "^4.1.0",
+        "@vueuse/core": "^10.2.0",
         "electron": "^25.1.1",
         "element-plus": "^2.3.6",
         "less": "^4.1.3",
