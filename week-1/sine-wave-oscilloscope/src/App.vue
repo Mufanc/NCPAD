@@ -17,7 +17,7 @@ import VChart from 'vue-echarts'
 
 use([SVGRenderer, LineChart, TitleComponent, GridComponent])
 
-function generate() {
+async function generate() {
     const sample = []
 
     for (let x = 0; x <= 10; x += 0.01) {
@@ -50,7 +50,7 @@ const option = computed(() => {
             left: 'center',
         },
         xAxis: rangeAxis('x', 0, 10),
-        yAxis: rangeAxis('y', -1.1, 1.1),
+        yAxis: rangeAxis('y', -1, 1),
         series: [
             {
                 type: 'line',
@@ -62,8 +62,10 @@ const option = computed(() => {
     }
 })
 
-function draw() {
-    data.value = generate()
+const dataPrepare = generate()
+
+async function draw() {
+    data.value = await dataPrepare
 }
 </script>
 
