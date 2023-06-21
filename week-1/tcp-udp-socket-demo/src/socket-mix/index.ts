@@ -1,8 +1,11 @@
 const { Socket: TcpClient, Server: TcpServer } = window.require('net') // TCP
+const { Socket: UdpSocketRaw, createSocket } = window.require('dgram') // UDP
+
+// import { Socket as UdpSocketRaw } from 'dgram'
+
 type TcpClient = typeof TcpClient
 type TcpServer = typeof TcpServer
-// import { Socket as UdpSocketSys } from 'node:dgram'  // UDP
-
+type UdpSocketRaw = typeof UdpSocketRaw
 type ProtocolType = 'TCP' | 'UDP' | 'CUSTOM'
 
 export abstract class Socket {
@@ -11,8 +14,7 @@ export abstract class Socket {
             case 'TCP':
                 return new TcpSocket()
             case 'UDP':
-                throw 'Not Implemented!'
-            // return new UdpSocket();
+                return new UdpSocket()
             case 'CUSTOM':
                 throw 'Not Implemented!'
             // return new WrapSocket();
@@ -21,7 +23,7 @@ export abstract class Socket {
 
     abstract address(): [string, number]
     abstract listen(port: number, callback: () => void): void
-    abstract connect(host: string, port: number, callback: () => void): void
+    abstract connect(host: string, port: number, callback?: () => void): void
     abstract send(message: string): void
     abstract onAccept(callback: (arg0: Socket | Buffer) => void): void
     abstract close(): void
@@ -75,10 +77,53 @@ class TcpSocket extends Socket {
     }
 }
 
-// class UdpSocket extends Socket {
-//
-// }
-//
+class UdpSocket extends Socket {
+    #raw: UdpSocketRaw
+    #bound: boolean = false
+    #isServer?: boolean
+
+    constructor(socket?: UdpSocketRaw) {
+        super()
+        this.#raw = socket || createSocket('udp4')
+    }
+
+    address(): [string, number] {
+        const info = this.#isServer ? this.#raw.address() : this.#raw.remoteAddress()
+        return [info.address, info.port]
+    }
+
+    close(): void { }
+
+    connect(host: string, port: number, callback: () => void): void {
+        this.#raw.connect(port, host, callback)
+        this.#isServer = false
+    }
+
+    listen(port: number, callback: () => void): void {
+        if (!this.#bound) {
+            this.#raw.bind(port, () => {
+                this.#bound = true
+                callback()
+            })
+        } else {
+            callback()
+        }
+        this.#isServer = true
+    }
+
+    onAccept(callback: (arg0: Socket | Buffer) => void): void {
+        this.#raw.on('message', callback)
+    }
+
+    onClose(callback: () => void): void { }
+
+    send(message: string): void {
+        this.#raw.send(message, () => {
+            this.#raw.disconnect()
+        })
+    }
+}
+
 // class WrapSocket extends Socket {
 //
 // }

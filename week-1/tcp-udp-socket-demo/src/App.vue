@@ -1,11 +1,24 @@
 <template>
     <div class="box flex flex-col">
-        <InputView class="flex-grow-1" v-model="logs" hint="还没有日志" readonly />
-        <InputView class="flex-grow-1" v-model="message" hint="发送点什么……" />
+        <InputView
+            v-if="protocol !== 'UDP' || mode == 'RX'"
+            class="flex-grow-1"
+            v-model="logs"
+            hint="还没有日志"
+            readonly
+        />
+        <InputView
+            v-if="protocol !== 'UDP' || mode == 'TX'"
+            class="flex-grow-1"
+            v-model="message"
+            :hint="mode == 'TX' ? '发送点什么……' : '响应信息'"
+            :readonly="mode == 'RX' && connected"
+            :lock="connected"
+        />
         <div class="flex">
             <el-radio-group v-model="mode" :disabled="connected">
-                <el-radio label="SERVER">服务端模式</el-radio>
-                <el-radio label="CLIENT">客户端模式</el-radio>
+                <el-radio label="RX">{{ protocol === 'UDP' ? '接收' : '服务' }}端模式</el-radio>
+                <el-radio label="TX">{{ protocol === 'UDP' ? '发送' : '客户' }}端模式</el-radio>
             </el-radio-group>
             <el-radio-group v-if="wrap" v-model="operation" class="flex-grow-1 justify-end">
                 <el-radio-button :label="0">读取</el-radio-button>
@@ -14,24 +27,23 @@
             </el-radio-group>
         </div>
         <div class="w-full control-bar">
-            <div v-if="mode === 'CLIENT'" class="flex-grow-1">
-                <span>服务器地址：</span>
-                <el-input class="mono w-12em" v-model="address"></el-input>
-                <el-button :disabled="!connected || !message" @click="send">发送信息</el-button>
-                <el-button :disabled="!connected" @click="end">断开连接</el-button>
-                <el-button :disabled="connected" @click="begin">开始连接</el-button>
-            </div>
-            <div v-else class="flex-grow-1">
-                <span>端口号：</span>
-                <el-input
-                    v-model="port"
-                    class="mono w-5em"
-                    input-style="text-align: center;"
-                ></el-input>
-                <el-button :disabled="!connected" @click="end">停止接收</el-button>
-                <el-button :disabled="connected || !message" @click="begin">启动接收</el-button>
-            </div>
+            <span v-if="mode === 'RX'">端口号：</span>
+            <span v-if="mode === 'TX'">{{ protocol === 'UDP' ? '对端' : '服务器' }}地址：</span>
+            <el-input v-if="mode === 'TX'" class="mono w-12em" v-model="address"></el-input>
+            <el-input
+                v-if="mode === 'RX'"
+                v-model="port"
+                class="mono w-5em"
+                input-style="text-align: center;"
+            ></el-input>
             <el-button @click="quit" type="danger" plain>退出</el-button>
+            <el-button v-if="mode === 'TX'" :disabled="!connected && protocol !== 'UDP'" @click="send">发送信息</el-button>
+            <el-button v-if="mode === 'TX' && protocol !== 'UDP'" :disabled="!connected" @click="end">断开连接</el-button>
+            <el-button v-if="mode === 'TX' && protocol !== 'UDP'" :disabled="connected" @click="begin">开始连接</el-button>
+            <el-button v-if="mode === 'RX'" :disabled="!connected" @click="end">停止接收</el-button>
+            <el-button v-if="mode === 'RX'" :disabled="connected || (!message && protocol !== 'UDP')" @click="begin"
+                >启动接收</el-button
+            >
         </div>
     </div>
 </template>
@@ -40,7 +52,9 @@
 import InputView from '@/components/InputView.vue'
 import { Socket } from '@/socket-mix'
 import { computedAsync } from '@vueuse/core'
+import { ElMessage } from 'element-plus'
 import { computed, ref, watchEffect } from 'vue'
+import 'element-plus/theme-chalk/el-message.css'
 
 const { ipcRenderer } = window.require('electron')
 
@@ -53,7 +67,7 @@ async function env(name: string, def: string) {
 
 const wrap = computedAsync(async () => (await env('WRAP', '0')) === '1') // 是否启用自定义协议
 const protocol = computedAsync(async () => (wrap.value ? 'CUSTOM' : await env('PROTOCOL', 'TCP')))
-const mode = computedAsync(async () => env('MODE', 'CLIENT')) // 工作模式（服务端/客户端）
+const mode = computedAsync(async () => env('MODE', 'TX')) // 工作模式（服务端/客户端）
 const operation = ref(0) // 操作（R/W/S）
 
 const address = ref('127.0.0.1:21168') // 服务端地址
@@ -62,18 +76,28 @@ const port = ref(21168) // 服务端监听端口号
 const connected = ref(false)
 
 watchEffect(() => {
-    const isServer = mode.value === 'SERVER'
+    const isServer = mode.value === 'RX'
     const protocolName = wrap.value ? '自定义' : `${protocol.value} `
     const localType = wrap.value ? (isServer ? '受控端' : '主控端') : isServer ? '服务端' : '客户端'
-    ipcRenderer.send('SET-TITLE', `${protocolName}协议通信程序 - ${localType}`)
+    if (protocol.value === 'UDP') {
+        ipcRenderer.send('SET-TITLE', `${protocolName}协议通信程序`)
+    } else {
+        ipcRenderer.send('SET-TITLE', `${protocolName}协议通信程序 - ${localType}`)
+    }
 })
 
 function quit() {
     ipcRenderer.send('EXIT')
 }
 
+function parseAddress(): [string, number] {
+    const [host, port] = address.value.split(':')
+    return [host, Number(port)]
+}
+
 function logPrint(message: string) {
     logs.value += message + '\n'
+    logs.value += '-'.repeat(50) + '\n'
 }
 
 function formatTime(time: Date) {
@@ -89,7 +113,11 @@ function formatBuffer(buffer: Buffer) {
     for (let i = 0; i < buffer.length; i++) {
         hex.push(buffer[i].toString(16).padStart(2, '0'))
     }
-    return hex.join(' ')
+    if (wrap.value) {
+        return hex.join(' ')
+    } else {
+        return `${hex.join(' ')} = "${buffer.toString()}"`
+    }
 }
 
 const socket = computed(() => {
@@ -98,28 +126,30 @@ const socket = computed(() => {
 })
 
 function begin() {
-    if (mode.value == 'SERVER') {
+    if (mode.value == 'RX') {
         socket.value?.listen(port.value, () => {
             logPrint('服务端启动，等待客户端连接……')
             connected.value = true
         })
     } else {
-        const [host, port] = address.value.split(':')
-        socket.value?.connect(host, Number(port), () => {
+        socket.value?.connect(...parseAddress(), () => {
             logPrint('连接成功！')
             connected.value = true
         })
     }
 
     function bufferPrint(buffer: Buffer, host: string, port: number) {
-        logPrint(`数据来源：${host}:${port}`)
-        logPrint(`当前数据包时间：${formatTime(new Date())}`)
-        logPrint(`当前数据包长度：${buffer.length} 字节`)
-        logPrint('当前数据包内容：')
-        logPrint(formatBuffer(buffer))
+        const output = [
+            `数据来源：${host}:${port}`,
+            `当前数据包时间：${formatTime(new Date())}`,
+            `当前数据包长度：${buffer.length} 字节`,
+            '当前数据包内容：',
+            formatBuffer(buffer)
+        ]
+        logPrint(output.join('\n'))
     }
 
-    socket.value?.onAccept(inc => {
+    socket.value?.onAccept((inc) => {
         if (inc instanceof Socket) {
             const [host, port] = inc.address()
 
@@ -134,8 +164,7 @@ function begin() {
                 inc.send(message.value)
             })
         } else {
-            const [host, port] = address.value.split(':')
-            bufferPrint(inc, host, Number(port))
+            bufferPrint(inc, ...parseAddress())
         }
     })
 
@@ -146,13 +175,27 @@ function begin() {
 }
 
 function send() {
-    socket.value?.send(message.value)
+    const mv = message.value
+    if (!mv) {
+        ElMessage.error('发送信息不能为空')
+        return
+    }
+
+    const sv = socket.value
+    if (!sv) return
+
+    if (protocol.value === 'UDP') {
+        sv.connect(...parseAddress(), () => sv.send(mv))
+    } else {
+        sv.send(mv)
+    }
+
     connected.value = true
 }
 
 function end() {
     socket.value?.close()
-    if (mode.value === 'SERVER') {
+    if (mode.value === 'RX') {
         connected.value = false
     }
 }
@@ -168,8 +211,6 @@ function end() {
 }
 
 .control-bar {
-    display: flex;
-
     span {
         display: inline-block;
         vertical-align: bottom;

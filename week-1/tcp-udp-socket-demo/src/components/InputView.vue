@@ -8,7 +8,7 @@
             @input="emit('update:modelValue', $event.target.value)"
             :readonly="props.readonly"
         />
-        <el-button @click="clear" class="clear-button" type="danger" plain round>
+        <el-button v-show="!props.lock" @click="clear" class="clear-button" type="danger" plain round>
             <template #icon>
                 <div class="i-mdi:close" />
             </template>
@@ -17,16 +17,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, toRef, watch } from 'vue'
 
 export interface Props {
     modelValue: string
     hint: string
     readonly?: boolean
+    lock?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
     readonly: false,
+    lock: false,
 })
 
 const emit = defineEmits<{
@@ -35,6 +37,15 @@ const emit = defineEmits<{
 
 const input = ref<HTMLTextAreaElement | null>(null)
 const opacity = computed(() => (props.modelValue ? 1 : 0))
+
+const value = toRef(props, 'modelValue')
+watch(
+    value,
+    () => {
+        input.value && (input.value.scrollTop = input.value.scrollHeight)
+    },
+    { flush: 'post' }
+)
 
 function clear() {
     emit('update:modelValue', '')
@@ -51,6 +62,7 @@ function clear() {
         resize: none;
         padding: 0.5em;
         font-family: 'Source Code Pro', 'Noto Sans SC', system-ui;
+        scroll-behavior: smooth;
 
         &:focus-visible {
             outline: var(--el-color-success) auto 1px;
