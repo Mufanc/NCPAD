@@ -47,7 +47,10 @@
                 >开始连接</el-button
             >
             <el-button v-if="mode === 'RX'" :disabled="!connected" @click="end">停止接收</el-button>
-            <el-button v-if="mode === 'RX'" :disabled="connected || (!message && protocol !== 'UDP')" @click="begin"
+            <el-button
+                v-if="mode === 'RX'"
+                :disabled="connected || (!(message || wrap) && protocol !== 'UDP')"
+                @click="begin"
                 >启动接收</el-button
             >
         </div>
@@ -183,7 +186,7 @@ function begin() {
     socket?.onAccept(inc => {
         if (inc instanceof Buffer) {
             bufferPrint(inc, ...parseAddress())
-            framePrint(Protocol.decode(inc))
+            if (wrap.value) framePrint(Protocol.decode(inc))
             return
         }
 

@@ -6,9 +6,17 @@
     "main": "dist-electron/main.js",
     "scripts": {
         "dev": "vite",
-        "build": "vue-tsc && vite build",
-        "preview": "vite preview",
-        "format-code": "prettier --write ."
+        "format-code": "prettier --write .",
+        "dev:tcp-server": "PROTOCOL=TCP MODE=RX run-s dev",
+        "dev:tcp-client": "PROTOCOL=TCP MODE=TX run-s dev",
+        "dev:udp-server": "PROTOCOL=UDP MODE=RX run-s dev",
+        "dev:udp-client": "PROTOCOL=UDP MODE=TX run-s dev",
+        "dev:custom-server": "PROTOCOL=TCP MODE=RX WRAP=1 run-s dev",
+        "dev:custom-client": "PROTOCOL=TCP MODE=TX WRAP=1 run-s dev",
+        "demo:tcp": "run-p dev:tcp-server dev:tcp-client",
+        "demo:udp": "run-p dev:udp-server dev:udp-client",
+        "demo:custom": "run-p dev:custom-server dev:custom-client",
+        "demo": "run-s demo:tcp demo:udp demo:custom"
     },
     "dependencies": {
         "vue": "^3.2.47"
@@ -23,6 +31,7 @@
         "electron": "^25.1.1",
         "element-plus": "^2.3.6",
         "less": "^4.1.3",
+        "npm-run-all": "^4.1.5",
         "prettier": "^2.8.8",
         "typescript": "^4.9.3",
         "unocss": "^0.53.1",
