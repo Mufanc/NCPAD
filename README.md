@@ -31,3 +31,19 @@ pnpm install && pnpm demo:udp
 ```shell
 pnpm install && pnpm demo:custom
 ```
+
+### 第二、三周设计任务
+
+* `2.1` ~~农业基地智能监控系统控制中心~~
+
+```shell
+# not implemented
+```
+
+<br/>
+
+* `2.2` [农业基地智能监控系统现场控制软件](week-2/agricultural-system-server)
+
+```shell
+pnpm install && pnpm dev
+```
