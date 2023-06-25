@@ -15,37 +15,37 @@
     >
         <el-form :model="caches" inline label-width="120px">
             <el-form-item label="本机基地号">
-                <el-radio-group v-model="caches.baseId" size="small">
+                <el-radio-group v-model.number="caches.baseNo" size="small">
                     <el-radio-button v-for="i in range(10)" :label="i" />
                 </el-radio-group>
             </el-form-item>
             <el-form-item label="加温温度阈值">
-                <el-input v-model="caches.heat" size="small"
+                <el-input v-model.number="caches.heat" size="small"
                     ><template #suffix>℃</template></el-input
                 >
             </el-form-item>
             <el-form-item label="降温温度阈值">
-                <el-input v-model="caches.cool" size="small"
+                <el-input v-model.number="caches.cool" size="small"
                     ><template #suffix>℃</template></el-input
                 >
             </el-form-item>
             <el-form-item label="空气湿度阈值">
-                <el-input v-model="caches.humidify" size="small"
+                <el-input v-model.number="caches.humidify" size="small"
                     ><template #suffix>%</template></el-input
                 >
             </el-form-item>
             <el-form-item label="土壤湿度阈值">
-                <el-input v-model="caches.water" size="small"
+                <el-input v-model.number="caches.water" size="small"
                     ><template #suffix>%</template></el-input
                 >
             </el-form-item>
             <el-form-item label="光照强度阈值">
-                <el-input v-model="caches.light" size="small"
+                <el-input v-model.number="caches.light" size="small"
                     ><template #suffix>LUX</template></el-input
                 >
             </el-form-item>
             <el-form-item label="CO₂ 浓度阈值">
-                <el-input v-model="caches.fertilizer" size="small"
+                <el-input v-model.number="caches.fertilizer" size="small"
                     ><template #suffix>PPM</template></el-input
                 >
             </el-form-item>
@@ -67,16 +67,16 @@ import { ref, toRaw } from 'vue'
 const showPopup = ref(false)
 
 const configs = useConfigStore()
-const { standbyMode, baseId } = storeToRefs(configs)
+const { standbyMode, baseNo } = storeToRefs(configs)
 
-type ConfigType = DeviceThreshold & { baseId: number }
+type ConfigType = DeviceThreshold & { baseNo: number }
 
 // Todo: Form rules --> https://element-plus.org/zh-CN/component/form.html#%E8%A1%A8%E5%8D%95%E6%A0%A1%E9%AA%8C
 const caches = ref<ConfigType>(refresh())
 
 function refresh() {
     return {
-        baseId: baseId.value,
+        baseNo: baseNo.value,
         ...configs.deviceParams,
     }
 }
@@ -84,10 +84,9 @@ function refresh() {
 function save() {
     const newConfigs = toRaw(caches.value)
 
-    baseId.value = newConfigs.baseId
+    baseNo.value = newConfigs.baseNo
     for (const [key, value] of Object.entries(newConfigs)) {
-        console.log(key, value)
-        if (key === 'baseId') continue
+        if (key === 'baseNo') continue
         Reflect.set(configs.deviceParams, key, value)
     }
 

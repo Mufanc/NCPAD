@@ -7,12 +7,8 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    ArgSettings: typeof import('./src/components/ArgSettings.vue')['default']
-    ArgsSettings: typeof import('./src/components/DevSettings.vue')['default']
-    ArgumentSettings: typeof import('./src/components/ArgumentSettings.vue')['default']
     ButtonSwitch: typeof import('./src/components/ButtonSwitch.vue')['default']
     CameraView: typeof import('./src/components/CameraView.vue')['default']
-    DevArgsPopuyp: typeof import('./src/components/DevArgsPopuyp.vue')['default']
     DeviceInfo: typeof import('./src/components/dashboard/DeviceInfo.vue')['default']
     DevSettings: typeof import('./src/components/footer/DevSettings.vue')['default']
     DevSwitch: typeof import('./src/components/footer/DevSwitch.vue')['default']
@@ -29,17 +25,19 @@ declare module 'vue' {
     ElHeader: typeof import('element-plus/es')['ElHeader']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElMain: typeof import('element-plus/es')['ElMain']
+    ElPopover: typeof import('element-plus/es')['ElPopover']
     ElRadioButton: typeof import('element-plus/es')['ElRadioButton']
     ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
+    ElTag: typeof import('element-plus/es')['ElTag']
+    Header: typeof import('./src/components/Header.vue')['default']
     List: typeof import('./src/components/dashboard/List.vue')['default']
     ListItem: typeof import('./src/components/dashboard/ListItem.vue')['default']
-    ParamInfo: typeof import('./src/components/dashboard/ParamInfo.vue')['default']
+    LocalInfo: typeof import('./src/components/LocalInfo.vue')['default']
     ParamsInfo: typeof import('./src/components/dashboard/ParamsInfo.vue')['default']
-    PopupSettings: typeof import('./src/components/PopupSettings.vue')['default']
+    SensorChart: typeof import('./src/components/dashboard/SensorChart.vue')['default']
     SensorInfo: typeof import('./src/components/dashboard/SensorInfo.vue')['default']
-    SensorInfoList: typeof import('./src/components/dashboard/SensorInfoList.vue')['default']
-    TwoStateButton: typeof import('./src/components/TwoStateButton.vue')['default']
+    Title: typeof import('./src/components/Title.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

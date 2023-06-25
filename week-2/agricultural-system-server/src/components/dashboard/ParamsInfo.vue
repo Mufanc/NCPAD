@@ -1,9 +1,12 @@
 <template>
     <List title="专家控制参数范围">
-        <ListItem v-for="ty in DEVICE_TYPES"
-            >{{ SENSOR_NAME[DEVICE2SENSOR[ty]] }}{{ getTriggerType(ty) }} {{ deviceParams[ty]
-            }}{{ SENSOR_UNIT[DEVICE2SENSOR[ty]] }} 开启{{ DEVICE_NAME[ty] }}</ListItem
-        >
+        <ListItem v-for="ty in DEVICE_TYPES">
+            {{ SENSOR_NAME[DEVICE2SENSOR[ty]] }}{{ getTriggerType(ty) }}&nbsp;
+            <el-tag effect="plain" class="w-5em"
+                >{{ deviceParams[ty] }}{{ SENSOR_UNIT[DEVICE2SENSOR[ty]] }}</el-tag
+            >
+            &nbsp;开启{{ DEVICE_NAME[ty] }}
+        </ListItem>
     </List>
 </template>
 

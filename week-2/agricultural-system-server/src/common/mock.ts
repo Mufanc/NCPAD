@@ -58,7 +58,7 @@ export class RandomCurve {
     next(): number {
         // noinspection LoopStatementThatDoesntLoopJS
         for (const x of this.#g) {
-            return Number((x * this.#a + this.#b).toFixed(2))
+            return x * this.#a + this.#b
         }
         throw 'wtf??'
     }

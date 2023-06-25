@@ -1,7 +1,7 @@
 <template>
     <div>
-        <div>{{ props.title }}</div>
-        <ul>
+        <h3 class="text-center mt-0 mb-0.5em">{{ props.title }}</h3>
+        <ul class="list-none p-0 m-0">
             <slot />
         </ul>
     </div>

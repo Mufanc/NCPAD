@@ -1,4 +1,6 @@
 import { RandomCurve } from '@/common/mock'
+import { useConfigStore } from '@/store/configs'
+import { storeToRefs } from 'pinia'
 import { ref, Ref } from 'vue'
 
 export interface SensorData {
@@ -31,6 +33,8 @@ export class Sensor {
     readonly #caches: Ref<SensorData>
 
     private constructor() {
+        const { standbyMode } = storeToRefs(useConfigStore())
+
         this.#mocks = {
             airTemperature: new RandomCurve(-10, 60),
             airHumidity: new RandomCurve(10, 100),
@@ -41,40 +45,27 @@ export class Sensor {
         }
 
         this.#caches = ref(this.#reload())
-        window.setInterval(() => (this.#caches.value = this.#reload()), 1000)
+        window.setInterval(() => {
+            if (!standbyMode.value) {
+                this.#caches.value = this.#reload()
+            }
+        }, 1000)
     }
 
     #reload(): SensorData {
+        function isInteger(key: string) {
+            return key === 'lightIntensity' || key === 'co2Concentration'
+        }
+
         return Object.fromEntries(
-            Object.entries(this.#mocks).map(([key, mock]) => [key, mock.next()])
+            Object.entries(this.#mocks).map(([key, mock]) => {
+                const value = mock.next().toFixed(isInteger(key) ? 0 : 2)
+                return [key, value]
+            })
         ) as any
     }
 
     loadAll(): Ref<SensorData> {
         return this.#caches
     }
-
-    // loadAirTemperature(): number {
-    //     return this.#caches.airTemperature
-    // }
-    //
-    // loadAirHumidity(): number {
-    //     return this.#caches.airHumidity
-    // }
-    //
-    // loadSoilTemperature(): number {
-    //     return this.#caches.soilTemperature
-    // }
-    //
-    // loadSoilHumidity(): number {
-    //     return this.#caches.soilHumidity
-    // }
-    //
-    // loadLightIntensity(): number {
-    //     return this.#caches.lightIntensity
-    // }
-    //
-    // loadCo2Concentration(): number {
-    //     return this.#caches.co2Concentration
-    // }
 }

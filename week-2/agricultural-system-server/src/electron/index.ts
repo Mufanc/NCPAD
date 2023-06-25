@@ -3,8 +3,8 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 app.on('ready', async () => {
     const win = new BrowserWindow({
         autoHideMenuBar: true,
-        width: 1000,
-        height: 750,
+        width: 1200,
+        height: 900,
         resizable: false,
         webPreferences: {
             nodeIntegration: true,

@@ -58,8 +58,12 @@ watch(
 onMounted(() => {
     const elb = ball.value!
     const elc = container.value!
-    moveX.value = elc.clientWidth - elb.clientWidth - 2 * padding
-    moveY.value = elc.clientHeight - elb.clientHeight - 2 * padding
+    const observer = new ResizeObserver(() => {
+        moveX.value = elc.clientWidth - elb.clientWidth - 2 * padding
+        moveY.value = elc.clientHeight - elb.clientHeight - 2 * padding
+    })
+    observer.observe(elb)
+    observer.observe(elc)
 })
 </script>
 

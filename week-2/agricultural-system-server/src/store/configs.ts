@@ -5,7 +5,7 @@ interface Configs {
     devSwitches: boolean[]
     automaticMode: boolean
     standbyMode: boolean
-    baseId: number
+    baseNo: number
     deviceParams: DeviceThreshold
 }
 
@@ -14,7 +14,7 @@ export const useConfigStore = defineStore('configs', {
         devSwitches: [],
         automaticMode: true,
         standbyMode: false,
-        baseId: 0,
+        baseNo: 0,
         deviceParams: {
             heat: 10,
             cool: 50,
