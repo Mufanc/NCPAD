@@ -74,6 +74,7 @@ watch(info.params, value => set(value))
 
 function connect(ip: string) {
     inputLock = true
+    info.ipaddr = ip
     client.value = new AgriClient(ip, error => {
         const message = `与客户机 ${ip} 连接断开`
         error ? ElMessage.error(message) : ElMessage.warning(message)

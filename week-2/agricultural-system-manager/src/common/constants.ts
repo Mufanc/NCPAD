@@ -17,7 +17,7 @@ export interface DeviceThreshold {
 }
 
 export interface ClientInfo {
-    readonly ipaddr: string
+    ipaddr: string
     baseNo: number
     automaticMode: boolean
     standbyMode: boolean
