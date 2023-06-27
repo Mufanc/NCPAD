@@ -34,15 +34,15 @@ pnpm install && pnpm demo:custom
 
 ### 第二、三周设计任务
 
-* `2.1` ~~农业基地智能监控系统控制中心~~
+* `2.1` [农业基地智能监控系统控制中心](week-2/agricultural-system-manager)
 
 ```shell
-# not implemented
+pnpm install && pnpm dev
 ```
 
 <br/>
 
-* `2.2` [农业基地智能监控系统现场控制软件](week-2/agricultural-system-server)
+* `2.2` [农业基地智能监控系统现场控制软件](week-2/agricultural-system-terminal)
 
 ```shell
 pnpm install && pnpm dev
