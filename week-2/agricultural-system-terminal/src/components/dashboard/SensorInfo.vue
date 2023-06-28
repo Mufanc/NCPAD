@@ -31,7 +31,7 @@ import List from '@/components/dashboard/List.vue'
 import ListItem from '@/components/dashboard/ListItem.vue'
 import SensorChart from '@/components/dashboard/SensorChart.vue'
 import { useConfigStore } from '@/store/configs'
-import { reactive, toRaw, watch } from 'vue'
+import { reactive, toRaw, watchEffect } from 'vue'
 
 const configs = useConfigStore()
 
@@ -59,14 +59,14 @@ function sync(sensorType: keyof SensorData, deviceType: keyof DeviceThreshold, v
         value
 }
 
-watch(values, value => {
+watchEffect(() => {
     if (!configs.automaticMode) return
 
+    const value = toRaw(values.value)
     const deviceParams = configs.deviceParams
-    const valueRaw: SensorData = toRaw(value)
 
     for (const ty of SENSOR_TYPES) {
-        history[ty].push(valueRaw[ty])
+        history[ty].push(value[ty])
         if (history[ty].length > 60) history[ty].shift()
     }
 
