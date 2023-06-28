@@ -8,5 +8,5 @@ if ! [ -r $SERIAL -a -w $SERIAL ]; then
     sudo chmod 666 $SERIAL
 fi
 
-stcgal 'echo.hex'
+stcgal 'custom.hex'
 
