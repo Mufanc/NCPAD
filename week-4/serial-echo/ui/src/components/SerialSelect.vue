@@ -22,7 +22,7 @@ const options = ref<{ value: string; label: string }[]>([])
 watch(serial, value => emit('update:modelValue', value))
 
 onMounted(async () => {
-    options.value = (await SerialPort.list()).map((it: any) => ({
+    options.value = (await SerialPort.list()).map(it => ({
         value: it.path,
         label: it.path,
     }))

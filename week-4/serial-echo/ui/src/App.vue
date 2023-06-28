@@ -12,13 +12,20 @@
                         >打开串口</el-button
                     >
                     <el-button v-show="serial" @click="close" :disabled="!path">关闭串口</el-button>
-                    <el-button>串口设置</el-button>
+                    <el-button @click="dialog = true" :disabled="!!serial">串口设置</el-button>
                     <el-button @click="serial?.write(message)" :disabled="!message || !serial"
                         >发送信息</el-button
                     >
                     <el-button type="danger" @click="ipcRenderer.send('EXIT')" plain
                         >退出程序</el-button
                     >
+                    <el-dialog v-model="dialog" title="串口设置" align-center>
+                        <el-form>
+                            <el-form-item label="波特率">
+                                <BaudSelect v-model="baud" />
+                            </el-form-item>
+                        </el-form>
+                    </el-dialog>
                 </div>
             </div>
         </el-footer>
@@ -27,6 +34,7 @@
 
 <script setup lang="ts">
 import fs from 'fs/promises'
+import BaudSelect from '@/components/BaudSelect.vue'
 import InputView from '@/components/InputView.vue'
 import SerialSelect from '@/components/SerialSelect.vue'
 import { ipcRenderer } from 'electron'
@@ -39,6 +47,9 @@ const message = ref('Hello, World!')
 
 const path = ref('')
 const serial = ref<SerialPort | null>(null)
+const baud = ref(2400)
+
+const dialog = ref(false)
 
 async function chown(path: string): Promise<void> {
     return new Promise(async (resolve, reject) => {
@@ -56,7 +67,7 @@ async function chown(path: string): Promise<void> {
 async function open(path: string) {
     await chown(path)
 
-    const sp = new SerialPort({ path, baudRate: 2400 })
+    const sp = new SerialPort({ path, baudRate: baud.value })
     serial.value = sp
 
     sp.on('data', (buffer: Buffer) => {
@@ -66,17 +77,11 @@ async function open(path: string) {
             .toUpperCase()
     })
 
-    // Todo: 检测断连
-    // sp.on('close', () => {
-    //     console.log('closed.')
-    // })
-    // sp.on('error', err => {
-    //     console.log(err)
-    // })
+    sp.on('close', () => close())
 }
 
 function close() {
-    serial.value?.close()
+    serial.value?.isOpen && serial.value?.close()
     serial.value = null
 }
 </script>
