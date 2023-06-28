@@ -40,7 +40,7 @@ import SerialSelect from '@/components/SerialSelect.vue'
 import { ipcRenderer } from 'electron'
 import { SerialPort } from 'serialport'
 import sudo from 'sudo-prompt'
-import { ref } from 'vue'
+import { ref, toRaw } from 'vue'
 
 const recv = ref('')
 const message = ref('Hello, World!')
@@ -81,7 +81,7 @@ async function open(path: string) {
 }
 
 function close() {
-    serial.value?.isOpen && serial.value?.close()
+    serial.value?.isOpen && toRaw(serial.value)?.close()
     serial.value = null
 }
 </script>

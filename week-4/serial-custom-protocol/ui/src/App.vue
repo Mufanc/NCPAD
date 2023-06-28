@@ -48,7 +48,7 @@ import { ipcRenderer } from 'electron'
 import { ElMessage } from 'element-plus'
 import { SerialPort } from 'serialport'
 import sudo from 'sudo-prompt'
-import { ref } from 'vue'
+import {ref, toRaw} from 'vue'
 import 'element-plus/theme-chalk/el-message.css'
 
 const message = ref('Hello, World!')
@@ -111,7 +111,7 @@ function command(op: Command['op']) {
 }
 
 function close() {
-    serial.value?.isOpen && serial.value?.close()
+    serial.value?.isOpen && toRaw(serial.value)?.close()
     serial.value = null
 }
 </script>
