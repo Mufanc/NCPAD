@@ -51,7 +51,6 @@ import sudo from 'sudo-prompt'
 import { ref } from 'vue'
 import 'element-plus/theme-chalk/el-message.css'
 
-const recv = ref('')
 const message = ref('Hello, World!')
 const op = ref<Command['op']>(1)
 
