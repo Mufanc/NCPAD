@@ -70,7 +70,7 @@ async function set(params: DeviceThreshold) {
 watch(automaticMode, value => update('automaticMode', value))
 watch(standbyMode, value => update('standbyMode', value))
 watch(info.devSwitches, value => update('devSwitches', value))
-watch(info.params, value => set(value))
+watch(info.params, value => setTimeout(() => set(value), 50))
 
 function connect(ip: string) {
     inputLock = true

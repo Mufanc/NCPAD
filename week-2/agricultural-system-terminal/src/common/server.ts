@@ -32,10 +32,7 @@ export class AgriServer {
 
             client.on('data', (buffer: Buffer) => {
                 const frame = Protocol.decode(buffer)
-                if (!frame) {
-                    console.error(`Validation failed: ${buffer}`)
-                    return
-                }
+                if (!frame) return
                 frame.command.ty = 1 // Set to ACK
                 switch (frame.command.op) {
                     case 1: // READ

@@ -56,6 +56,7 @@ export class Protocol {
     static decode(buffer: Buffer): FrameInfo | null {
         const last = buffer.length - 1
         if (buffer[last] != this.#crc(buffer.subarray(0, last))) {
+            console.error('datagram verify failed')
             return null
         }
 
