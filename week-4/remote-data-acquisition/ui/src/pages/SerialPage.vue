@@ -9,7 +9,9 @@
                 <el-button v-show="!serial" @click="open(path)" :disabled="!path"
                     >打开串口</el-button
                 >
-                <el-button v-show="serial" @click="close" :disabled="!path">关闭串口</el-button>
+                <el-button v-show="serial" @click="close" :disabled="!path" type="warning" plain
+                    >关闭串口</el-button
+                >
                 <el-button @click="dialog = true" :disabled="!!serial">串口设置</el-button>
                 <el-dialog v-model="dialog" title="串口设置" align-center>
                     <el-form>
@@ -31,8 +33,11 @@ import SerialSelect from '@/components/pages-serial/SerialSelect.vue'
 import { ElMessage } from 'element-plus'
 import { SerialPort } from 'serialport'
 import sudo from 'sudo-prompt'
-import { ref } from 'vue'
+import { ref, toRaw } from 'vue'
 import 'element-plus/theme-chalk/el-message.css'
+import { Env } from '@/common/env'
+import EventBus from '@/common/event-bus'
+import { bufferToString } from '@/common/utils'
 
 const dialog = ref(false)
 const logcat = ref<InstanceType<typeof Logcat> | null>(null)
@@ -62,25 +67,25 @@ async function open(path: string) {
             ElMessage.error(err.message)
             close()
         }
+        EventBus.emit('SET-BEGIN-TIME', new Date().getTime())
     })
     serial.value = sp
 
     sp.on('data', (buffer: Buffer) => {
-        // Todo: format message
-        logcat.value?.log(
-            buffer
-                .toString('hex')
-                .toUpperCase()
-                .replace(/(.{2})/g, '$1 ')
-        )
+        const env = Env.unpack(buffer)
+
+        logcat.value?.log(bufferToString(buffer) + (env ? '[\u2713]' : '[\u2717]'))
+
+        if (env) EventBus.emit('SENSOR-UPDATE', env)
     })
 
     sp.on('close', () => close())
 }
 
 function close() {
-    serial.value?.isOpen && serial.value?.close()
+    serial.value?.isOpen && toRaw(serial.value)?.close()
     serial.value = null
+    EventBus.emit('SET-BEGIN-TIME', 0)
 }
 </script>
 

@@ -1,14 +1,7 @@
 <template>
     <div class="input-view">
-        <textarea
-            ref="input"
-            class="input"
-            placeholder="还没有日志……"
-            :value="logs"
-            @input="emit('update:modelValue', $event.target.value)"
-            readonly
-        />
-        <el-button @click="clear" class="clear-button" type="danger" plain round>
+        <textarea ref="input" class="input" placeholder="还没有日志……" :value="logs" readonly />
+        <el-button @click="logs = ''" class="clear-button" type="danger" plain round>
             <template #icon>
                 <div class="i-mdi:close" />
             </template>
@@ -21,10 +14,6 @@ import { computed, ref, watch } from 'vue'
 
 const logs = ref('')
 
-const emit = defineEmits<{
-    (ev: 'update:modelValue', val: string): void
-}>()
-
 const input = ref<HTMLTextAreaElement | null>(null)
 const opacity = computed(() => (logs.value ? 1 : 0))
 
@@ -35,10 +24,6 @@ watch(
     },
     { flush: 'post' }
 )
-
-function clear() {
-    emit('update:modelValue', '')
-}
 
 function log(message: string) {
     logs.value += message + '\n'

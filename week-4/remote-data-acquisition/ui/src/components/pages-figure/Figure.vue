@@ -11,9 +11,10 @@ import { computed } from 'vue'
 import VChart from 'vue-echarts'
 
 const props = defineProps<{
-    curve: number[]
-    yLabel: string
     title: string
+    yLabel: string
+    duration: number
+    data: [number, number][]
 }>()
 
 use([SVGRenderer, LineChart, TitleComponent, GridComponent])
@@ -25,13 +26,11 @@ const option = computed(() => {
             left: 'center',
         },
         xAxis: {
-            min: 1,
-            max: 60,
+            name: '时间（秒）',
+            min: props.data[0]?.[0],
+            max: props.data[0]?.[0] + props.duration,
             minorTick: {
                 show: true,
-            },
-            axisLabel: {
-                show: false,
             },
         },
         yAxis: {
@@ -43,13 +42,14 @@ const option = computed(() => {
         series: [
             {
                 type: 'line',
+                smooth: 1,
                 showSymbol: false,
                 clip: true,
-                data: props.curve.map((x, i) => [i, x]),
+                data: props.data,
             },
         ],
     }
 })
 </script>
 
-<style scoped lang="less"></style>
+<style scoped></style>

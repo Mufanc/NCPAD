@@ -15,6 +15,7 @@ declare module 'vue' {
     ElFooter: typeof import('element-plus/es')['ElFooter']
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
+    ElInput: typeof import('element-plus/es')['ElInput']
     ElMain: typeof import('element-plus/es')['ElMain']
     ElOption: typeof import('element-plus/es')['ElOption']
     ElRadioButton: typeof import('element-plus/es')['ElRadioButton']
@@ -24,9 +25,14 @@ declare module 'vue' {
     ElSelectV2: typeof import('element-plus/es')['ElSelectV2']
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
+    Figure: typeof import('./src/components/pages-figure/Figure.vue')['default']
     InputView: typeof import('./src/components/Logcat.vue')['default']
-    Logcat: typeof import('./src/components/pages-serial/Logcat.vue')['default']
+    Ipv4Input: typeof import('./src/components/pages-network/Ipv4Input.vue')['default']
+    Logcat: typeof import('./src/components/Logcat.vue')['default']
     Plot: typeof import('./src/components/pages-plots/Plot.vue')['default']
+    ScrollFigure: typeof import('./src/components/pages-plots/ScrollFigure.vue')['default']
+    ScrollPlot: typeof import('./src/components/pages-plots/ScrollPlot.vue')['default']
+    SensorFigure: typeof import('./src/components/pages-figure/SensorFigure.vue')['default']
     SerialSelect: typeof import('./src/components/pages-serial/SerialSelect.vue')['default']
   }
 }
