@@ -47,3 +47,28 @@ pnpm install && pnpm dev
 ```shell
 pnpm install && pnpm dev
 ```
+
+### 第四周设计任务
+
+* `4.1` [串口通信程序设计入门](week-4/serial-echo)
+
+```shell
+chmod u+x run.sh && ./run.sh
+```
+
+<br/>
+
+* `4.2` [自定义协议串口通信程序设计入门](week-4/serial-custom-protocol)
+
+```shell
+chmod u+x run.sh && ./run.sh
+```
+
+<br/>
+
+* `4.3` [基于单片机和TCP协议的远程数据采集系统](week-4/remote-data-acquisition)
+
+```shell
+chmod u+x run.sh && ./run.sh
+```
+
