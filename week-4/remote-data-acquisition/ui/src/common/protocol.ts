@@ -22,7 +22,7 @@ export class Command {
 
 export interface FrameInfo {
     frameNo: number
-    message: string
+    message: Buffer
     command: Command
 }
 
@@ -40,7 +40,7 @@ export class Protocol {
         return result
     }
 
-    static encode(command: Command, message: String, fno: number = 0): Buffer {
+    static encode(command: Command, message: Buffer, fno: number = 0): Buffer {
         if (!fno) this.fno += 1 // 帧号递增
 
         const data = Buffer.from(message)
@@ -73,7 +73,7 @@ export class Protocol {
         // noinspection JSBitwiseOperatorUsage
         return {
             frameNo: buffer.readUint32LE(6),
-            message: buffer.subarray(11, 11 + len).toString(),
+            message: buffer.subarray(11, 11 + len),
             command: {
                 op: (comm & 0x0f) as any,
                 ty: comm & 0xa0 ? 1 : 0,

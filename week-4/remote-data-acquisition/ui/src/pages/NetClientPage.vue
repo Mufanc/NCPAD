@@ -63,20 +63,35 @@ socket.on('data', buffer => {
 
     switch (frame.command.op) {
         case 1:
-            EventBus.emit('SENSOR-UPDATE', JSON.parse(frame.message))
+            const buffer = Buffer.alloc(10)
+            frame.message.copy(buffer)
+
+            function rf(off: number) {
+                const val = buffer.readFloatBE(off)
+                buffer.writeUint32LE(0, off)
+                console.log(val)
+                return val
+            }
+
+            EventBus.emit('SENSOR-UPDATE', {
+                v2: rf(6),
+                v1: rf(4),
+                ill: rf(2),
+                T: rf(0),
+            })
             break
         case 2:
             break
         case 3:
-            const begin = JSON.parse(frame.message)
-            if (begin == 0) {
+            const begin = Number(frame.message.readBigUint64LE())
+            if (begin === 0) {
                 ElMessage.error('发送端未开启数据采集！')
                 break
             }
             active.value = true
             EventBus.emit('SET-BEGIN-TIME', begin)
             loopTimer = window.setInterval(
-                () => socket.write(Protocol.encode(Command.READ, '')),
+                () => socket.write(Protocol.encode(Command.READ, Buffer.alloc(0))),
                 250
             )
             break
@@ -95,7 +110,7 @@ function close() {
 }
 
 function launch() {
-    socket.write(Protocol.encode(Command.SET, ''))
+    socket.write(Protocol.encode(Command.SET, Buffer.alloc(0)))
 }
 
 function stop() {

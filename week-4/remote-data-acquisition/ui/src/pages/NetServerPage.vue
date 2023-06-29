@@ -51,19 +51,30 @@ function listen() {
                 frame.command.ty = 1 // 设置响应
                 switch (frame.command.op) {
                     case 1:
-                        // Todo: custom protocol 2 + 2 + 2 + 2
+                        const ev = env.value!
+                        const buffer = Buffer.alloc(10)
+
+                        buffer.writeFloatBE(ev.T, 0)
+                        buffer.writeFloatBE(ev.ill, 2)
+                        buffer.writeFloatBE(ev.v1, 4)
+                        buffer.writeFloatBE(ev.v2, 6)
+
+                        console.log(buffer)
+
                         client.write(
-                            Protocol.encode(frame.command, JSON.stringify(env.value), frame.frameNo)
+                            Protocol.encode(frame.command, buffer.subarray(0, 8), frame.frameNo)
                         )
                         break
                     case 2:
                         break
                     case 3:
-                        const listener = (begin: number) => {
+                        const listener = (value: number) => {
                             EventBus.off('GET-BEGIN-TIME-ACK', listener)
-                            client.write(
-                                Protocol.encode(frame.command, JSON.stringify(begin), frame.frameNo)
-                            )
+
+                            const buffer = Buffer.alloc(8)
+                            buffer.writeBigUint64LE(BigInt(value))
+
+                            client.write(Protocol.encode(frame.command, buffer, frame.frameNo))
                         }
 
                         EventBus.on('GET-BEGIN-TIME-ACK', listener)
