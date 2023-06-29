@@ -17,3 +17,8 @@ cd serial-custom-protocol || exit
 cd ..
 
 wait
+
+cd remote-data-acquisition || exit
+./run.sh
+cd ..
+
