@@ -6,6 +6,7 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
 import { defineConfig } from 'vite'
 import Electron from 'vite-plugin-electron'
+import ElectronRenderer from 'vite-plugin-electron-renderer'
 
 export default defineConfig({
     plugins: [
@@ -14,6 +15,7 @@ export default defineConfig({
         Electron({
             entry: 'src/electron/index.ts',
         }),
+        ElectronRenderer({}),
         AutoImport({
             resolvers: [ElementPlusResolver()],
         }),

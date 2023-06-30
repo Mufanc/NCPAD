@@ -1,16 +1,8 @@
-;
-// import { Server, Socket, createServer } from 'net'
-
-import { Sensor, SensorData } from "@/common/device-utils";
-import { Protocol } from "@/common/protocol";
-import { useConfigStore } from "@/store/configs";
-import { Ref } from "vue";
-
-
-const { Server, Socket, createServer } = window.require('net')
-
-type Server = typeof Server
-type Socket = typeof Socket
+import { createServer, Server, Socket } from 'net'
+import { Sensor, SensorData } from '@/common/device-utils'
+import { Protocol } from '@/common/protocol'
+import { useConfigStore } from '@/store/configs'
+import { Ref } from 'vue'
 
 export class AgriServer {
     static #instance?: AgriServer

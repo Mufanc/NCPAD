@@ -1,12 +1,6 @@
-const { Socket: TcpClient, Server: TcpServer } = window.require('net') // TCP
-const { Socket: UdpSocketRaw, createSocket } = window.require('dgram') // UDP
+import { createSocket, Socket as UdpSocketRaw } from 'dgram'
+import { Socket as TcpClient, Server as TcpServer } from 'net'
 
-// import { Socket as TcpClient, Server as TcpServer } from 'net'
-// import { Socket as UdpSocketRaw } from 'dgram'
-
-type TcpClient = typeof TcpClient
-type TcpServer = typeof TcpServer
-type UdpSocketRaw = typeof UdpSocketRaw
 type ProtocolType = 'TCP' | 'UDP'
 
 export { Protocol } from './protocol'

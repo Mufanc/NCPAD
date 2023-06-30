@@ -6,6 +6,7 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
 import { defineConfig } from 'vite'
 import Electron from 'vite-plugin-electron'
+import ElectronRenderer from 'vite-plugin-electron-renderer'
 
 // noinspection JSUnusedGlobalSymbols
 export default defineConfig({
@@ -17,6 +18,7 @@ export default defineConfig({
                 entry: 'src/electron/main.ts',
             },
         ]),
+        ElectronRenderer({}),
         AutoImport({
             resolvers: [ElementPlusResolver()],
         }),

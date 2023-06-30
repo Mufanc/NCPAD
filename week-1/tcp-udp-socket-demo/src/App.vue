@@ -65,8 +65,7 @@ import { ElMessage } from 'element-plus'
 import { ref, watch, watchEffect } from 'vue'
 import 'element-plus/theme-chalk/el-message.css'
 import { FrameInfo } from '@/socket-mix/protocol'
-
-const { ipcRenderer } = window.require('electron')
+import { ipcRenderer } from 'electron'
 
 const logs = ref('') // 日志
 const message = ref('') // 要发送的信息
@@ -144,7 +143,6 @@ const stop = watch(
 
 function begin() {
     if (mode.value == 'RX') {
-        console.log('??', socket)
         socket?.listen(port.value, () => {
             logPrint('服务端启动，等待客户端连接……')
             connected.value = true

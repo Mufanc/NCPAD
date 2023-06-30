@@ -46,10 +46,10 @@ import SensorInfo from '@/components/dashboard/SensorInfo.vue'
 import DevSwitchGroup from '@/components/footer/DevSwitchGroup.vue'
 import Header from '@/components/Header.vue'
 import { useConfigStore } from '@/store/configs'
+import { ipcRenderer } from 'electron'
 import { storeToRefs } from 'pinia'
 import { onMounted } from 'vue'
 
-const { ipcRenderer } = window.require('electron')
 const { automaticMode, standbyMode } = storeToRefs(useConfigStore())
 
 function quit() {

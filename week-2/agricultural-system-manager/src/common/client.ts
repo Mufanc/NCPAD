@@ -1,11 +1,8 @@
 // import { Socket } from 'net'
+import { Socket } from 'net'
 import { ClientInfo, DeviceThreshold } from '@/common/constants'
 import { Command, FrameInfo, Protocol } from '@/common/protocol'
 import { toRaw } from 'vue'
-
-const { Socket } = window.require('net')
-
-type Socket = typeof Socket
 
 export class AgriClient {
     static TIMEOUT = 5000
